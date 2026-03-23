@@ -1,0 +1,9 @@
+client_secret.json
+gsjs.json
+__pycache__/
+.venv/
+venv/
+node_modules/
+dist/
+build/
+*.log

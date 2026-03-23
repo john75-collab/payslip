@@ -1,0 +1,606 @@
+
+{% extends "base.html" %}
+{% block title %}Generate Payslip{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Payslip Generator - JOSO</title>
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<style>
+/* ------------------ Global ------------------ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(91, 141, 239, 0.18), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(46, 204, 113, 0.12), transparent 25%),
+        linear-gradient(135deg, #edf2f9, #dbe9ff, #eef4ff);
+    color: #1e293b;
+    height: 100%;
+    overflow: hidden; /* ❌ removes full page scrollbar */
+}
+
+/* ------------------ Main Container ------------------ */
+.container {
+    width: 100%;
+    max-width: 920px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 35px 32px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow:
+        0 20px 60px rgba(15, 23, 42, 0.12),
+        0 8px 24px rgba(59, 130, 246, 0.08);
+}
+
+/* ------------------ Heading ------------------ */
+h1 {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 30px;
+    letter-spacing: 0.5px;
+}
+
+h3 {
+    color: #0f172a;
+    margin-bottom: 14px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* ------------------ Labels ------------------ */
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #334155;
+}
+
+/* ------------------ Forms ------------------ */
+form {
+    width: 100%;
+}
+
+input[type="month"],
+input[type="number"],
+select {
+    width: 100%;
+    border: 1px solid #dbe2ea;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 15px;
+    background: #ffffff;
+    color: #1e293b;
+    outline: none;
+    transition: all 0.25s ease;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+input[type="month"]:focus,
+input[type="number"]:focus,
+select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+/* ------------------ Top Form ------------------ */
+.top-form {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    align-items: end;
+    margin-bottom: 28px;
+}
+
+.top-form button {
+    margin-top: 0;
+    min-width: 180px;
+}
+
+/* ------------------ Employee Select Area ------------------ */
+.employee-scroll {
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid #dbe2ea;
+    border-radius: 14px;
+    padding: 10px;
+    background: linear-gradient(180deg, #ffffff, #f8fbff);
+    box-shadow: inset 0 2px 6px rgba(15, 23, 42, 0.03);
+}
+
+.employee-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.employee-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.employee-scroll::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.emp-item {
+    display: block;
+    padding: 8px 6px;
+    font-size: 14px;
+    border-radius: 8px;
+    transition: 0.2s ease;
+}
+
+.emp-item:hover {
+    background: #eff6ff;
+}
+
+/* ------------------ Select2 ------------------ */
+.select2-container {
+    width: 100% !important;
+}
+
+.select2-container--default .select2-selection--multiple {
+    border: 1px solid #dbe2ea !important;
+    border-radius: 12px !important;
+    padding: 8px !important;
+    min-height: 48px !important;
+    background: #fff !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12) !important;
+}
+
+.select2-selection__choice {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 30px !important;
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+    font-weight: 500;
+    margin-top: 4px !important;
+}
+
+.select2-selection__choice__remove {
+    color: #dbeafe !important;
+    margin-right: 6px !important;
+    border: none !important;
+}
+
+.select2-selection__choice__remove:hover {
+    color: #ffffff !important;
+    background: transparent !important;
+}
+
+/* ------------------ Preview Box ------------------ */
+.preview-box {
+    margin-top: 24px;
+    padding: 20px;
+    background: linear-gradient(180deg, #f8fbff, #f1f7ff);
+    border: 1px solid #dbeafe;
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.08);
+    display: none;
+}
+
+.table-scroll {
+    max-height: 260px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border: 1px solid #dbe2ea;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.table-scroll::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 8px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0;
+}
+
+table thead th {
+    position: sticky;
+    top: 0;
+    background: linear-gradient(135deg, #0f172a, #1e3a8a);
+    color: #fff;
+    z-index: 1;
+    padding: 14px 12px;
+    font-size: 14px;
+    text-align: left;
+    letter-spacing: 0.3px;
+}
+
+table td {
+    border-top: 1px solid #eef2f7;
+    padding: 12px;
+    font-size: 14px;
+    color: #334155;
+}
+
+table tbody tr:nth-child(even) {
+    background: #f8fbff;
+}
+
+table tbody tr:hover {
+    background: #eef6ff;
+}
+
+/* ------------------ Allowance Section ------------------ */
+.allowance-section {
+    margin-top: 28px;
+    padding: 24px;
+    background: linear-gradient(180deg, #ffffff, #f8fbff);
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+.allowance-section h3 {
+    margin-bottom: 18px;
+}
+
+.allowance-item {
+    display: grid;
+    grid-template-columns: 1fr 140px;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 14px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid #edf2f7;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.03);
+}
+
+.allowance-item:hover {
+    background: #f8fbff;
+    border-color: #bfdbfe;
+    transform: translateY(-1px);
+}
+
+.allowance-item label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.allowance-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #2563eb;
+    cursor: pointer;
+}
+
+.allowance-item input[type="number"] {
+    width: 100%;
+    text-align: right;
+    font-weight: 600;
+    background: #f8fafc;
+}
+
+/* ------------------ Selected Employee List ------------------ */
+.selected-list {
+    margin-top: 14px;
+}
+
+.selected-employee {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    font-size: 14px;
+    border: 1px solid #bfdbfe;
+}
+
+.selected-employee span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #1e3a8a;
+    font-weight: 500;
+}
+
+.remove-btn {
+    font-size: 18px;
+    font-weight: bold;
+    color: #64748b;
+    cursor: pointer;
+    margin-left: 12px;
+    transition: 0.2s ease;
+}
+
+.remove-btn:hover {
+    color: #ef4444;
+    transform: scale(1.15);
+}
+
+/* ------------------ Buttons ------------------ */
+button {
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
+}
+
+button:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(37, 99, 235, 0.32);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* ------------------ Spacing Utility ------------------ */
+.section-gap {
+    margin-top: 24px;
+}
+
+/* ------------------ Responsive ------------------ */
+@media (max-width: 768px) {
+    .container {
+        padding: 24px 18px;
+        border-radius: 18px;
+    }
+
+    h1 {
+        font-size: 26px;
+    }
+
+    .top-form {
+        grid-template-columns: 1fr;
+    }
+
+    .top-form button {
+        width: 100%;
+    }
+
+    .allowance-item {
+        grid-template-columns: 1fr;
+    }
+
+    .allowance-item input[type="number"] {
+        text-align: left;
+    }
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Payslip Generator</h1>
+
+    <form method="POST" action="/" class="top-form">
+        <div>
+            <label>Select Month & Year</label>
+            <input type="month" name="pay_period" value="{{ selected_period }}">
+        </div>
+        <div>
+            <button type="submit">Load Employees</button>
+        </div>
+    </form>
+
+    <form method="POST" action="/payslip">
+
+        <input type="hidden" name="pay_period" value="{{ selected_period }}">
+
+        <label>Select Employee(s)</label>
+        <div class="employee-scroll">
+            <select name="emp_ids" id="empSelect" multiple required style="width:100%">
+                {% for emp in employees %}
+                <option value="{{ emp.emp_id }}"
+                        data-name="{{ emp.name }}"
+                        data-basic="{{ emp.basic }}">
+                    {{ emp.name }} (ID: {{ emp.emp_id }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="preview-box" id="previewBox" style="display:none;">
+            <h3>Selected Employee Details</h3>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Basic Salary</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previewBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="allowance-section">
+            <h3>Allowances / Deductions</h3>
+
+            <div class="allowance-item">
+                <label><input type="checkbox" name="pf_enabled"> PF</label>
+                <input type="number" name="pf_value" value="12">
+            </div>
+
+            <div class="allowance-item">
+                <label><input type="checkbox" name="esi_enabled"> ESI</label>
+                <input type="number" name="esi_value" value="0.75">
+            </div>
+
+            <div class="allowance-item">
+                <label><input type="checkbox" name="hra_enabled"> HRA</label>
+                <input type="number" name="hra_value" value="40">
+            </div>
+
+            <div class="allowance-item">
+                <label><input type="checkbox" name="da_enabled"> DA</label>
+                <input type="number" name="da_value" value="10">
+            </div>
+
+            <div class="allowance-item">
+                <label><input type="checkbox" name="ita_enabled"> ITA</label>
+                <input type="number" name="ita_value" value="1600">
+            </div>
+
+            <div class="allowance-item">
+                <label><input type="checkbox" name="cl_enabled"> CL</label>
+                <input type="number" name="cl_value" value="0" min="0">
+            </div>
+        </div>
+
+        <button type="submit">Generate Payslip</button>
+    </form>
+</div>
+</body>
+
+<script>
+$(document).ready(function () {
+
+    const empSelect = $('#empSelect');
+    const previewBox = $('#previewBox');
+    const previewBody = $('#previewBody');
+    const selectedBox = $('#selectedEmployees');
+
+    empSelect.select2({
+        placeholder: "Search employee by name or ID",
+        width: '100%',
+        closeOnSelect: false
+    });
+
+    empSelect.on('change', function () {
+
+        previewBody.empty();
+        selectedBox.empty();
+
+        const selected = $('#empSelect option:selected');
+
+        if (selected.length === 0) {
+            previewBox.hide();
+            return;
+        }
+
+        previewBox.show();
+
+        selected.each(function () {
+            previewBody.append(`
+                <tr>
+                    <td>${this.value}</td>
+                    <td>${$(this).data('name')}</td>
+                    <td>₹ ${$(this).data('basic')}</td>
+                </tr>
+            `);
+
+            selectedBox.append(`
+                <div class="selected-employee">
+                    <span>${$(this).data('name')} (ID: ${this.value})</span>
+                    <span class="remove-btn" data-id="${this.value}">×</span>
+                </div>
+            `);
+        });
+    });
+
+    $(document).on('click', '.remove-btn', function () {
+        const id = $(this).data('id');
+        $(`#empSelect option[value="${id}"]`).prop('selected', false);
+        empSelect.trigger('change');
+    });
+
+});
+
+    // Load Employees button (no submit)
+    $('#loadEmployees').on('click', function () {
+        empSelect.val(null).trigger('change');
+        previewBox.hide();
+    });
+
+    // Change handler
+    empSelect.on('change', function () {
+
+        previewBody.empty();
+        selectedBox.empty();
+
+        const selected = $('#empSelect option:selected');
+
+        if (selected.length === 0) {
+            previewBox.hide();
+            return;
+        }
+
+        previewBox.show();
+
+        selected.each(function () {
+
+            previewBody.append(`
+                <tr>
+                    <td>${this.value}</td>
+                    <td>${$(this).data('name')}</td>
+                    <td>₹ ${$(this).data('basic')}</td>
+                </tr>
+            `);
+
+            selectedBox.append(`
+                <div class="selected-employee">
+                    <span>${$(this).data('name')} (ID: ${this.value})</span>
+                    <span class="remove-btn" data-id="${this.value}">×</span>
+                </div>
+            `);
+        });
+    });
+
+    // Remove employee
+    $(document).on('click', '.remove-btn', function () {
+        const id = $(this).data('id');
+        $(`#empSelect option[value="${id}"]`).prop('selected', false);
+        empSelect.trigger('change');
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Link external CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='ustyle.css') }}">
+</head>
+<body>
+
+<form method="POST" action="{{ url_for('generate_payslip') }}">
+    <input type="hidden" name="file_id" value="{{ file_id }}">
+    <input type="hidden" name="emp_id" value="{{ emp.emp_id }}">
+    <input type="hidden" name="period" value="{{ period }}">
+
+    <label>Name</label>
+    <input type="text" name="name" value="{{ emp.name }}" required>
+
+    <label>Department</label>
+    <input type="text" name="department" value="{{ emp.department }}" required>
+
+    <label>Phone</label>
+    <input type="text" name="phone" value="{{ emp.phone }}" required>
+
+    <label>Mail</label>
+    <input type="email" name="mail" value="{{ emp.mail }}" required>
+
+    <label>Bank</label>
+    <input type="text" name="bank" value="{{ emp.bank }}" required>
+
+    <label>Account No</label>
+    <input type="text" name="acc_no" value="{{ emp.acc_no }}" required>
+
+    <label>Basic</label>
+    <input type="number" name="basic" value="{{ emp.basic }}" required>
+
+    <label><input type="checkbox" name="hra_enabled"> HRA</label>
+    <input type="number" name="hra_value" value="40">
+
+    <label><input type="checkbox" name="da_enabled"> DA</label>
+    <input type="number" name="da_value" value="10">
+
+    <label><input type="checkbox" name="ita_enabled"> ITA</label>
+    <input type="number" name="ita_value" value="1600">
+
+    <label><input type="checkbox" name="pf_enabled"> PF</label>
+    <input type="number" name="pf_value" value="12">
+
+    <label><input type="checkbox" name="esi_enabled"> ESI</label>
+    <input type="number" name="esi_value" value="0.75">
+
+    <label><input type="checkbox" name="cl_enabled"> CL</label>
+    <input type="number" name="cl_value" value="0">
+
+    <button type="submit">update payslip</button>
+</form>
+
+</body>
+</html>

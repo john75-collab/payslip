@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payslip</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="payslip">
+    <h2>Payslip</h2>
+
+    <p><b>Name:</b> {{ emp.name }}</p>
+    <p><b>Department:</b> {{ emp.department }}</p>
+    <p><b>Present Days:</b> {{ present_days }}</p>
+
+    <hr>
+
+    <p>Basic: ₹{{ gross_basic }}</p>
+    <p>HRA: ₹{{ hra }}</p>
+    <p>DA: ₹{{ da }}</p>
+    <p>ITA: ₹{{ ita }}</p>
+
+    <p class="deduction">PF: -₹{{ pf }}</p>
+    <p class="deduction">ESI: -₹{{ esi }}</p>
+
+    <hr>
+
+    <h3>Gross Salary: ₹{{ gross_salary }}</h3>
+    <h2>Net Salary: ₹{{ net_salary }}</h2>
+</div>
+
+</body>
+</html>

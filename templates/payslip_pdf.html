@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Payslip - JOSO</title>
+
+    <style>
+       body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #eef2f7, #dbe7f3);
+    padding: 30px;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    color: #0a2a52;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+}
+
+/* ===== Buttons ===== */
+button.print-btn,
+button.send-btn {
+    display: inline-block;
+    margin: 10px auto;
+    padding: 12px 26px;
+    background: linear-gradient(135deg, #0a2a52, #1d5fa7);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+/* ===== Container ===== */
+.payslip-container {
+    display: flex;
+    gap: 25px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+/* ===== Payslip Card ===== */
+.payslip {
+    position: relative;
+    flex: 0 0 720px;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    border-top: 6px solid #0a2a52;
+}
+
+/* Close Button */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #ff4d4d;
+}
+
+/* ===== Header ===== */
+.payslip h2 {
+    text-align: center;
+    color: #0a2a52;
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+}
+
+.company-info {
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 18px;
+}
+
+/* ===== Tables ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 18px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+table th {
+    background: #0a2a52;
+    color: #fff;
+    padding: 10px;
+    font-size: 14px;
+}
+
+table td {
+    padding: 9px 12px;
+    background: #f9fbfd;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+}
+
+table tr:last-child td {
+    border-bottom: none;
+}
+
+/* ===== Attendance ===== */
+.attendance-highlights {
+    display: flex;
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.bonus {
+    background: linear-gradient(135deg, #d4edda, #b7e4c7);
+    padding: 12px;
+    flex: 1;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 10px;
+    color: #155724;
+}
+
+.penalty {
+    background: linear-gradient(135deg, #f8d7da, #f1aeb5);
+    padding: 12px;
+    flex: 1;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 10px;
+    color: #721c24;
+}
+
+/* ===== Net Salary ===== */
+.net-salary {
+    text-align: right;
+    font-weight: bold;
+    font-size: 18px;
+    color: #0a2a52;
+    margin-top: 10px;
+}
+
+/* ===== Footer ===== */
+.footer {
+    text-align: center;
+    font-size: 12px;
+    margin-top: 18px;
+    color: #666;
+}
+
+/* ===== Scrollbar ===== */
+.payslip-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.payslip-container::-webkit-scrollbar-thumb {
+    background: #0a2a52;
+    border-radius: 10px;
+}
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;          /* space between buttons */
+    margin-bottom: 25px;
+}
+
+.action-buttons form {
+    margin: 0;         /* removes extra spacing */
+}
+
+/* ===== Print ===== */
+@media print {
+    .send-btn,
+    .print-btn,
+    .close-btn,
+    .pdf-only-hide {
+        display: none !important;
+    }
+
+    body {
+        background: #fff;
+        padding: 0;
+    }
+
+    .payslip {
+        box-shadow: none;
+        border: 1px solid #000;
+        page-break-after: always;
+    }
+}
+    </style>
+</head>
+
+<body>
+{% for slip in payslips %}  
+<div class="payslip-container">
+    <div class="payslip">
+
+        <div style="text-align:center; margin-bottom:15px;">
+            <img src="data:image/jpeg;base64,{{ logo_base64 }}" style="height:70px;">
+            <h2 style="margin:5px 0;">INFOGROW TECHNOLOGY</h2>
+            <p style="margin:0; font-size:14px;">Maduravoyal, Chennai</p>
+       </div>
+
+        <div class="company-info">
+            <p><strong>Payslip Period:</strong> {{ slip.month }}</p>
+            <!--Payslip Period: {{ slip.get('month','') }}--> 
+             <!--Date Generated: {{ slip.get('today','') }}-->
+        </div>
+
+
+        <table>
+            <tr>
+                <td><b>Employee Name:</b> {{ slip.get('name','') }}</td>
+                <td><b>Employee ID:</b> {{ slip.get('emp_id','') }}</td>
+            </tr>
+            <tr>
+                <td><b>Phone:</b> {{ slip.get('phone','') }}</td>
+                <td><b>Email:</b> {{ slip.get('mail','') }}</td>           
+            </tr>
+            <tr>
+                <td><b>Bank:</b> {{ slip.get('bank','') }}</td>
+                <td><b>Account No:</b> {{ slip.get('acc_no','') }}</td>
+            </tr>
+            <tr>
+                <td><b>Present Days:</b> {{ slip.get('present_days', 0) }}</td>
+                <td><b>Absent Days:</b> {{ slip.get('absent_days', 0) }} &nbsp; | &nbsp; <b>CL:</b> {{ slip.get('cl', 0) }}</td>
+            </tr>
+            <tr>
+                <td colspan="2"><b>Total Working Days:</b> {{ slip.get('total_days',0) }}</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr><th>Earnings</th><th>₹</th></tr>
+            <tr><td>Basic</td><td>{{ slip.get('basic',0) }}</td></tr>
+
+            {% if slip.get('hra',0) > 0 %}
+            <tr><td>HRA</td><td>{{ slip.get('hra') }}</td></tr>
+            {% endif %}
+
+            {% if slip.get('da',0) > 0 %}
+            <tr><td>DA</td><td>{{ slip.get('da') }}</td></tr>
+            {% endif %}
+
+            {% if slip.get('ita',0) > 0 %}
+            <tr><td>ITA</td><td>{{ slip.get('ita') }}</td></tr>
+            {% endif %}
+            <tr>
+                <td><b>Total Earnings</b></td>
+                <td><b>{{ slip.get('total_earnings', 0) }}</b></td>
+            </tr>
+            <tr><th>Deductions</th><th>₹</th></tr>
+
+            {% if slip.get('pf',0) > 0 %}
+            <tr><td>PF</td><td>{{ slip.get('pf') }}</td></tr>
+            {% endif %}
+
+            {% if slip.get('esi',0) > 0 %}
+            <tr><td>ESI</td><td>{{ slip.get('esi') }}</td></tr>
+            {% endif %}
+
+            {% if slip.get('loss_of_pay',0) > 0 %}
+            <tr><td>Loss of Pay</td><td>{{ slip.get('loss_of_pay') }}</td></tr>
+            {% endif %}
+        </table>
+
+        <div class="attendance-highlights">
+            {% if slip.get('attendance_bonus',0) > 0 %}
+            <div class="bonus">Bonus ₹{{ slip.get('attendance_bonus') }}</div>
+            {% endif %}
+
+            {% if slip.get('attendance_penalty',0) > 0 %}
+            <div class="penalty">Penalty ₹{{ slip.get('attendance_penalty') }}</div>
+            {% endif %}
+            <tr>
+                <td><b>Total Deductions</b></td>
+                <td><b>{{ slip.get('total_deductions', 0) }}</b></td>
+            </tr>
+        </div>
+
+        <div class="net-salary">
+            Net Salary: ₹{{ slip.get('net_salary',0) }}
+        </div>
+        <div style="margin-top:8px; font-size:14px; color:#333;">
+            <b>In Words:</b> {{ slip.get('net_salary_words', '') }}
+        </div>
+
+        <div class="footer">
+            This is a system generated payslip. No signature required.
+        </div>
+    </div>
+{% endfor %}
+</div>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Payslip History{% endblock %}
+
+{% block content %}
+<style>
+    /* ===== GLOBAL ===== */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    background-color: #f4f6f9;
+}
+
+/* ===== PAGE TITLE ===== */
+.page-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+/* ===== TABLE WRAPPER ===== */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+/* ===== TABLE ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+/* ===== HEADER ===== */
+thead th {
+    background: #003366;
+    color: #ffffff;
+    padding: 12px;
+    text-align: center;
+    font-size: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+/* ===== BODY ===== */
+tbody td {
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* ===== ROW EFFECT ===== */
+tbody tr:hover {
+    background-color: #f1f7ff;
+}
+
+/* ===== EMPLOYEE INFO ===== */
+.emp-id {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.emp-name {
+    font-weight: 500;
+    color: #34495e;
+}
+
+/* ===== SALARY LINK ===== */
+.salary-link {
+    color: #0066cc;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.salary-link:hover {
+    text-decoration: underline;
+    color: #003366;
+}
+
+/* ===== EMPTY CELL ===== */
+.empty {
+    color: #aaa;
+    font-style: italic;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    thead th,
+    tbody td {
+        font-size: 12px;
+        padding: 8px;
+    }
+}
+</style>
+<h2 class="page-title">Payslip History</h2>
+<form method="get">
+  <select name="year" onchange="this.form.submit()">
+    <option value="">All Years</option>
+    {% for y in years %}
+      <option value="{{ y }}">{{ y }}</option>
+    {% endfor %}
+  </select>
+</form>
+<div class="table-container">
+<table>
+    <thead>
+        <tr>
+            <th>Emp ID</th>
+            <th>Employee Name</th>
+            {% for m in months %}
+                <th>{{ m }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for emp in employees %}
+        <tr>
+            <td class="emp-id">{{ emp.emp_id }}</td>
+            <td class="emp-name">{{ emp.emp_name }}</td>
+
+            {% for m in months %}
+                <td>
+                    {% if emp.months[m] %}
+                        <a class="salary-link"
+                           href="{{ emp.months[m].link }}"
+                           target="_blank">
+                            ₹{{ emp.months[m].salary }}
+                        </a>
+                        <a href="{{ url_for('edit_payslip', emp_id=emp.emp_id, month=m, year=emp.months[m].year) }}">
+    Edit
+</a>
+                    {% else %}
+                        <span class="empty">-</span>
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}
